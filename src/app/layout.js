@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Menu from "@/components/Menu/Menu";
+import Header from "@/components/Header/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,12 +22,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`flex ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`flex flex-col ${geistSans.variable} ${geistMono.variable} antialiased h-screen`}
       >
-
-        <Menu />
-
-        {children}
+        <Header />
+        <div className="flex flex-1 overflow-hidden">
+          <Menu />
+          <main className="flex-1 overflow-auto" style={{ backgroundColor: "#e8e8e8" }}>
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );

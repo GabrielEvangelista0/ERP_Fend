@@ -1,0 +1,16 @@
+export const produtos = [
+  { id: 1, nome: 'Produto A', categoria: 'Eletrônicos', preco: 'R$ 100,00', estoque: 50 },
+  { id: 2, nome: 'Produto B', categoria: 'Livros', preco: 'R$ 200,00', estoque: 30 },
+  { id: 3, nome: 'Notebook Dell', descricao: 'Notebook Dell Inspiron 15', preco: 'R$ 3500,00', estoque: 12, categoria: 'Computadores' },
+  { id: 4, nome: 'Mouse Logitech', descricao: 'Mouse sem fio Logitech M705', preco: 'R$ 150,00', estoque: 45, categoria: 'Periféricos' },
+  { id: 5, nome: 'Teclado Mecânico', descricao: 'Teclado mecânico RGB', preco: 'R$ 450,00', estoque: 28, categoria: 'Periféricos' },
+  { id: 6, nome: 'SSD 1TB', descricao: 'SSD Kingston 1TB NVMe', preco: 'R$ 600,00', estoque: 35, categoria: 'Armazenamento' },
+  { id: 7, nome: 'Memória RAM 16GB', descricao: 'RAM DDR4 16GB 3200MHz', preco: 'R$ 320,00', estoque: 50, categoria: 'Memória' },
+  { id: 8, nome: 'Processador Ryzen', descricao: 'AMD Ryzen 7 5700X', preco: 'R$ 2800,00', estoque: 8, categoria: 'Processadores' },
+  { id: 9, nome: 'Placa Mãe B550', descricao: 'ASUS ROG Strix B550', preco: 'R$ 1200,00', estoque: 15, categoria: 'Componentes' },
+  { id: 10, nome: 'Cabo HDMI 2.1', descricao: 'Cabo HDMI 2.1 4K', preco: 'R$ 85,00', estoque: 120, categoria: 'Cabos' },
+  { id: 11, nome: 'Monitor 27" 144Hz', descricao: 'Monitor Samsung 27 polegadas', preco: 'R$ 1800,00', estoque: 10, categoria: 'Monitores' },
+  { id: 12, nome: 'Webcam HD', descricao: 'Webcam HD 1080p Logitech', preco: 'R$ 280,00', estoque: 42, categoria: 'Periféricos' },
+  { id: 13, nome: 'Headset Gamer', descricao: 'Headset Corsair RGB', preco: 'R$ 550,00', estoque: 22, categoria: 'Áudio' },
+  { id: 14, nome: 'Fonte 750W', descricao: 'Fonte modular 750W Gold', preco: 'R$ 700,00', estoque: 18, categoria: 'Fontes' },
+];
