@@ -17,7 +17,7 @@ export default function PageHeader({ titulo, descricao = "", botaoNome, onCreate
                 {botaoNome && (
                     <button
                         onClick={() => onCreate && onCreate()}
-                        className="px-4 py-2.5 bg-gray-900 text-white rounded text-sm hover:bg-gray-800 font-medium whitespace-nowrap"
+                        className="px-4 py-2.5 bg-gray-900 text-white rounded text-sm hover:bg-gray-800 font-medium whitespace-nowrap cursor-pointer"
                     >
                         {botaoNome}
                     </button>

@@ -286,6 +286,7 @@ export default function CreateEditModal({ open, onClose, tipo, onSave, initial }
                         const isNumeric = ['valor', 'preco', 'estoque', 'items', 'total'].includes(f);
                         return (
                             <input
+                                required
                                 key={f}
                                 type={isNumeric ? 'number' : 'text'}
                                 step={isNumeric ? '0.01' : undefined}
@@ -298,8 +299,8 @@ export default function CreateEditModal({ open, onClose, tipo, onSave, initial }
                     })}
                 </div>
                 <div className="flex justify-end gap-2 mt-4">
-                    <button type="button" onClick={onClose} className="px-3 py-1 rounded border">Cancelar</button>
-                    <button type="submit" className="px-3 py-1 rounded bg-gray-900 text-white">Salvar</button>
+                    <button type="button" onClick={onClose} className="px-3 py-1 rounded border cursor-pointer border-gray-300 hover:bg-gray-100">Cancelar</button>
+                    <button type="submit" className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed">Salvar</button>
                 </div>
             </form>
         </div>
