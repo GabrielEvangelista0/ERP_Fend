@@ -19,9 +19,12 @@ export default function Page() {
         return Object.values(item).some(v => String(v).toLowerCase().includes(q));
     });
 
+    console.log(comprasData);
+    
+
     return (
         <div className="flex-1 min-h-screen flex flex-col">
-            <PageHeader titulo="Compras" descricao="Registro de compras de fornecedores" botaoNome="+ novo" onCreate={() => { setEditing(null); setModalOpen(true); }} />
+            <PageHeader titulo="Compras" descricao="Registro de compras de fornecedores" botaoNome="+ nova Compra" onCreate={() => { setEditing(null); setModalOpen(true); }} />
             <div className="p-8 bg-white mx-8 my-8 rounded-lg border border-gray-200 flex flex-col flex-1">
                 <SearchBar value={query} onChange={setQuery} />
                 <h2 className="text-lg font-bold mb-6 text-black">Histórico de Vendas</h2>

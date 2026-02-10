@@ -45,7 +45,7 @@ export default function Page() {
             <div className="px-8 py-4 flex items-center gap-3 justify-center flex-wrap">
                 <button
                     onClick={() => setFiltro("pagar")}
-                    className={`px-6 py-2 rounded-full font-medium transition-colors ${
+                    className={`px-6 py-2 rounded-full font-medium transition-colors cursor-pointer ${
                         filtro === "pagar"
                             ? "bg-gray-600 text-white"
                             : "bg-gray-200 text-gray-600 hover:bg-gray-300"
@@ -55,7 +55,7 @@ export default function Page() {
                 </button>
                 <button
                     onClick={() => setFiltro("receber")}
-                    className={`px-6 py-2 rounded-full font-medium transition-colors ${
+                    className={`px-6 py-2 rounded-full font-medium transition-colors cursor-pointer ${
                         filtro === "receber"
                             ? "bg-gray-600 text-white"
                             : "bg-gray-200 text-gray-600 hover:bg-gray-300"
@@ -64,7 +64,7 @@ export default function Page() {
                     Contas a Receber
                 </button>
                 <button onClick={() => { setEditing(null); setModalOpen(true); }} className="px-4 py-2 bg-gray-900 text-white rounded text-sm hover:bg-gray-800 font-medium whitespace-nowrap ml-auto">
-                    {filtro === 'receber' ? '+ nova conta a receber' : '+ nova conta a pagar'}
+                    {'+ nova conta a pagar'}
                 </button>
             </div>
 
@@ -99,8 +99,7 @@ export default function Page() {
                         }
                     } else {
                         const next = { ...obj, id: Date.now().toString().slice(0,8), status: 'Pendente' };
-                        if (filtro === 'receber') setDadosReceber(prev => [next, ...prev]);
-                        else setDadosPagar(prev => [next, ...prev]);
+                        setDadosPagar(prev => [next, ...prev]);
                     }
                 }}
             />

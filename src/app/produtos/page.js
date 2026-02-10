@@ -21,7 +21,7 @@ export default function Page() {
 
     return (
         <div className="flex-1 min-h-screen flex flex-col">
-            <PageHeader titulo="Produtos" descricao="Gerenciamento de produtos" botaoNome="+ novo" onCreate={() => { setEditing(null); setModalOpen(true); }} />
+            <PageHeader titulo="Produtos" descricao="Gerenciamento de produtos" botaoNome="+ novo produto" onCreate={() => { setEditing(null); setModalOpen(true); }} />
             <div className="p-8 bg-white mx-8 my-8 rounded-lg border border-gray-200 flex flex-col flex-1">
                 <SearchBar value={query} onChange={setQuery} />
                 <TabelaDados dados={filtered} tipo="produto" onEdit={(item) => { setEditing(item); setModalOpen(true); }} />

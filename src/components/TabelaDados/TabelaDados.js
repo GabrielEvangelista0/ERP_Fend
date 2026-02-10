@@ -7,18 +7,18 @@ const TabelaDados = ({ dados, tipo, onEdit, onStatusChange }) => {
         cliente: ['nome', 'email', 'telefone', 'endereco', 'acoes'],
         fornecedor: ['nome', 'email', 'telefone', 'cnpj', 'acoes'],
         produto: ['nome', 'categoria', 'preco', 'estoque', 'acoes'],
-        venda: ['data', 'cliente.nome', 'items', 'total', 'status', 'acoes'],
-        compra: ['data', 'fornecedor.nome', 'items', 'total', 'status', 'acoes'],
-        financeiro: ['descricao', 'fornecedor.nome', 'valor', 'vencimento', 'status', 'acoes'],
+        venda: ['data', 'cliente', 'items', 'total', 'acoes'],
+        compra: ['data', 'fornecedor', 'items', 'total', 'acoes'],
+        financeiro: ['descricao', 'valor', 'vencimento', 'status', 'acoes'],
     };
 
     const headersByType = {
         cliente: ['Nome', 'Email', 'Telefone', 'Endereço', 'Editar'],
         fornecedor: ['Nome', 'Email', 'Telefone', 'CNPJ', 'Editar'],
         produto: ['Nome', 'Categoria', 'Preço', 'Estoque', 'Editar'],
-        venda: ['Data', 'Cliente', 'Items', 'Total', 'Status', 'Editar'],
-        compra: ['Data', 'Fornecedor', 'Items', 'Total', 'Status', 'Editar'],
-        financeiro: ['Descrição', 'Fornecedor', 'Valor', 'Vencimento', 'Status', 'Ações'],
+        venda: ['Data', 'Cliente', 'Items', 'Total', 'Editar'],
+        compra: ['Data', 'Fornecedor', 'Items', 'Total', 'Editar'],
+        financeiro: ['Descrição', 'Valor', 'Vencimento', 'Status', 'Ações'],
     };
 
     const getColumnsForType = () => columnsByType[tipo] || Object.keys(dados[0] || {});
@@ -26,7 +26,7 @@ const TabelaDados = ({ dados, tipo, onEdit, onStatusChange }) => {
 
     const readValue = (obj, path) => {
         if (!obj) return '-';
-        // support dot notation like 'fornecedor.nome'
+        // support dot notation like 'fornecedor'
         if (path.includes('.')) {
             return path.split('.').reduce((acc, key) => (acc ? acc[key] : undefined), obj) ?? '-';
         }
@@ -58,7 +58,7 @@ const TabelaDados = ({ dados, tipo, onEdit, onStatusChange }) => {
                                             const updated = { ...item, status: 'Pago' };
                                             onStatusChange && onStatusChange(updated);
                                         }}
-                                        className="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 font-medium"
+                                        className="px-3 py-1 bg-[#001A23] text-white rounded text-sm hover:bg-[#5386E4] cursor-pointer"
                                     >
                                         Confirmar Pagamento
                                     </button>
@@ -73,7 +73,7 @@ const TabelaDados = ({ dados, tipo, onEdit, onStatusChange }) => {
                             {col === 'acoes' || col === 'editar' ? (
                                 <button
                                     onClick={() => onEdit && onEdit(item)}
-                                    className="text-blue-600 hover:text-blue-800 font-medium"
+                                    className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
                                 >
                                     Editar
                                 </button>
