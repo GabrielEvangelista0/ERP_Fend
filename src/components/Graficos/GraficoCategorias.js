@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const DEFAULT_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4', '#f472b6'];
 
@@ -9,11 +9,11 @@ const GraficoCategorias = ({ produtosData = null }) => {
   const data = useMemo(() => {
     if (!produtosData || produtosData.length === 0) {
       return [
-        { name: 'Eletrônicos', value: 35, color: '#3b82f6' },
-        { name: 'Roupas', value: 25, color: '#10b981' },
-        { name: 'Alimentos', value: 20, color: '#f59e0b' },
-        { name: 'Móveis', value: 12, color: '#8b5cf6' },
-        { name: 'Outros', value: 8, color: '#ef4444' },
+        { name: 'Eletrônicos', value: 35 },
+        { name: 'Roupas', value: 25 },
+        { name: 'Alimentos', value: 20 },
+        { name: 'Móveis', value: 12 },
+        { name: 'Outros', value: 8 },
       ];
     }
 
@@ -24,10 +24,9 @@ const GraficoCategorias = ({ produtosData = null }) => {
       map[cat] = (map[cat] || 0) + estoque;
     });
 
-    const entries = Object.entries(map).map(([name, value], idx) => ({
+    const entries = Object.entries(map).map(([name, value]) => ({
       name,
       value,
-      color: DEFAULT_COLORS[idx % DEFAULT_COLORS.length],
     }));
 
     // sort desc by value
@@ -35,27 +34,13 @@ const GraficoCategorias = ({ produtosData = null }) => {
     return entries;
   }, [produtosData]);
 
-  const COLORS = data.map((item, i) => item.color || DEFAULT_COLORS[i % DEFAULT_COLORS.length]);
-
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <PieChart>
-        <Pie
-          data={data}
-          cx="50%"
-          cy="50%"
-          labelLine={true}
-          label={({ name, value }) => `${name}: ${value}`}
-          outerRadius={80}
-          fill="#8884d8"
-          dataKey="value"
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
+      <BarChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
         <Tooltip
-          formatter={(value) => `${value}`}
           contentStyle={{
             backgroundColor: '#fff',
             border: '1px solid #ccc',
@@ -63,7 +48,8 @@ const GraficoCategorias = ({ produtosData = null }) => {
           }}
         />
         <Legend />
-      </PieChart>
+        <Bar dataKey="value" fill="#3b82f6" name="Estoque" />
+      </BarChart>
     </ResponsiveContainer>
   );
 };

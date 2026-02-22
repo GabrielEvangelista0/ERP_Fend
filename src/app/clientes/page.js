@@ -5,15 +5,15 @@ import PageHeader from "@/components/PageHeader/PageHeader";
 import TabelaDados from "@/components/TabelaDados/TabelaDados";
 import SearchBar from "@/components/SearchBar/SearchBar";
 import CreateEditModal from "@/components/CreateEditModal/CreateEditModal";
-import { clientes as clientesDados } from "@/data/clientes";
+import { useApp } from "@/providers/AppProvider";
 
 export default function Page() {
+    const { clientes, upsertCliente, removeCliente, canEdit } = useApp();
     const [query, setQuery] = useState("");
-    const [dados, setDados] = useState(clientesDados);
     const [modalOpen, setModalOpen] = useState(false);
     const [editing, setEditing] = useState(null);
 
-    const filtered = dados.filter(item => {
+    const filtered = clientes.filter(item => {
         const q = query.trim().toLowerCase();
         if (!q) return true;
         return Object.values(item).some(v => String(v).toLowerCase().includes(q));
@@ -21,10 +21,18 @@ export default function Page() {
 
     return (
         <div className="flex-1 min-h-screen flex flex-col">
-            <PageHeader titulo="Clientes" descricao="Gerenciamento de clientes" botaoNome="+ novo cliente" onCreate={() => { setEditing(null); setModalOpen(true); }} />
+            <PageHeader titulo="Clientes" descricao="Gerenciamento de clientes" botaoNome={canEdit("clientes") ? "+ novo cliente" : undefined} onCreate={() => { setEditing(null); setModalOpen(true); }} />
             <div className="p-8 bg-white mx-8 my-8 rounded-lg border border-gray-200 flex flex-col flex-1">
                 <SearchBar value={query} onChange={setQuery} />
-                <TabelaDados dados={filtered} tipo="cliente" onEdit={(item) => { setEditing(item); setModalOpen(true); }} />
+                <TabelaDados
+                    dados={filtered}
+                    tipo="cliente"
+                    onEdit={canEdit("clientes") ? (item) => { setEditing(item); setModalOpen(true); } : undefined}
+                    onDelete={canEdit("clientes") ? (item) => {
+                        const result = removeCliente(item.id);
+                        if (!result?.ok) alert(result?.message || "Nao foi possivel remover cliente.");
+                    } : undefined}
+                />
             </div>
 
             <CreateEditModal
@@ -33,12 +41,8 @@ export default function Page() {
                 tipo="cliente"
                 initial={editing}
                 onSave={(obj) => {
-                    if (editing) {
-                        setDados((prev) => prev.map(p => p.id === editing.id ? { ...p, ...obj } : p));
-                    } else {
-                        const next = { ...obj, id: Date.now() };
-                        setDados((prev) => [next, ...prev]);
-                    }
+                    const result = upsertCliente(editing ? { ...editing, ...obj } : obj);
+                    if (!result?.ok) alert(result?.message || "Nao foi possivel salvar cliente.");
                 }}
             />
         </div>
