@@ -47,12 +47,12 @@ export default function Page() {
             <button
               key={item.id}
               onClick={() => setTab(item.id)}
-              className={`p-4 rounded-lg border-2 text-left ${tab === item.id ? "border-gray-900 bg-gray-50" : "border-gray-200 bg-white"}`}
+              className={`p-4 rounded-lg border-2 text-left text-[#001A23] cursor-pointer hover:bg-[#001A23] hover:text-[#E0F2F1] ${tab === item.id ? "border-gray-900 bg-gray-50" : "border-gray-200 bg-white"}`}
             >
-              <h3 className="font-bold text-black">{item.nome}</h3>
+              <h3 className="font-bold">{item.nome}</h3>
             </button>
           ))}
-          <button onClick={() => exportCsv(`relatorio-${tab}.csv`, rows)} className="p-4 rounded-lg border-2 border-emerald-700 bg-emerald-50 text-emerald-900 font-semibold">
+          <button onClick={() => exportCsv(`relatorio-${tab}.csv`, rows)} className="p-4 rounded-lg border-2 cursor-pointer bg-[#001A23] text-[#E0F2F1] font-semibold hover:bg-[#002F3A] transition-colors">
             Exportar CSV
           </button>
         </div>
