@@ -1,0 +1,49 @@
+/* Estilos para o componente DetalhesVendaCompra */
+
+.detalhes-venda-compra {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Estilos da tabela de itens */
+.detalhes-venda-compra table tr:hover {
+  background-color: #f9fafb;
+}
+
+.detalhes-venda-compra table th {
+  font-weight: 600;
+  color: #374151;
+  background-color: #f3f4f6;
+  border-bottom: 2px solid #d1d5db;
+}
+
+.detalhes-venda-compra table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .detalhes-venda-compra {
+    width: 100%;
+  }
+
+  .detalhes-venda-compra table {
+    font-size: 0.875rem;
+  }
+
+  .detalhes-venda-compra table td,
+  .detalhes-venda-compra table th {
+    padding: 0.5rem;
+  }
+}

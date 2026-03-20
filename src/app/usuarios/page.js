@@ -28,8 +28,8 @@ export default function Page() {
           dados={filtered}
           tipo="usuario"
           onEdit={canEdit("usuarios") ? (item) => { setEditing(item); setModalOpen(true); } : undefined}
-          onDelete={canEdit("usuarios") ? (item) => {
-            const result = removeUsuario(item.id);
+          onDelete={canEdit("usuarios") ? async (item) => {
+            const result = await removeUsuario(item.id);
             if (!result?.ok) alert(result?.message || "Nao foi possivel remover usuario.");
           } : undefined}
         />

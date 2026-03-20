@@ -15,12 +15,16 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setErro("");
+    console.debug('[LoginPage] iniciando login para usuário:', form.login);
     const result = await login(form.login, form.senha);
+    console.debug('[LoginPage] resultado do login:', result);
     setLoading(false);
     if (!result.ok) {
       setErro(result.message);
+      console.error('[LoginPage] erro no login:', result.message);
       return;
     }
+    console.debug('[LoginPage] redirecionando para home...');
     router.replace("/");
   };
 

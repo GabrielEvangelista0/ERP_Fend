@@ -28,8 +28,8 @@ export default function Page() {
                     dados={filtered}
                     tipo="produto"
                     onEdit={canEdit("produtos") ? (item) => { setEditing(item); setModalOpen(true); } : undefined}
-                    onDelete={canEdit("produtos") ? (item) => {
-                        const result = removeProduto(item.id);
+                    onDelete={canEdit("produtos") ? async (item) => {
+                        const result = await removeProduto(item.id);
                         if (!result?.ok) alert(result?.message || "Nao foi possivel remover produto.");
                     } : undefined}
                 />
@@ -40,8 +40,8 @@ export default function Page() {
                 onClose={() => setModalOpen(false)}
                 tipo="produto"
                 initial={editing}
-                onSave={(obj) => {
-                    const result = upsertProduto(editing ? { ...editing, ...obj } : obj);
+                onSave={async (obj) => {
+                    const result = await upsertProduto(editing ? { ...editing, ...obj } : obj);
                     if (!result?.ok) alert(result?.message || "Nao foi possivel salvar produto.");
                 }}
             />

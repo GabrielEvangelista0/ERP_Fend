@@ -28,8 +28,8 @@ export default function Page() {
                     dados={filtered}
                     tipo="fornecedor"
                     onEdit={canEdit("fornecedores") ? (item) => { setEditing(item); setModalOpen(true); } : undefined}
-                    onDelete={canEdit("fornecedores") ? (item) => {
-                        const result = removeFornecedor(item.id);
+                    onDelete={canEdit("fornecedores") ? async (item) => {
+                        const result = await removeFornecedor(item.id);
                         if (!result?.ok) alert(result?.message || "Nao foi possivel remover fornecedor.");
                     } : undefined}
                 />
@@ -40,8 +40,8 @@ export default function Page() {
                 onClose={() => setModalOpen(false)}
                 tipo="fornecedor"
                 initial={editing}
-                onSave={(obj) => {
-                    const result = upsertFornecedor(editing ? { ...editing, ...obj } : obj);
+                onSave={async (obj) => {
+                    const result = await upsertFornecedor(editing ? { ...editing, ...obj } : obj);
                     if (!result?.ok) alert(result?.message || "Nao foi possivel salvar fornecedor.");
                 }}
             />

@@ -11,8 +11,12 @@ export default function Home() {
 
   const totalEstoque = produtos.reduce((s, p) => s + (Number(p.estoque) || 0), 0);
   const totalVendas = vendas.reduce((s, v) => s + (Number(v.total) || 0), 0);
-  const totalReceber = contasReceber.reduce((s, c) => s + (Number(c.valor) || 0), 0);
-  const totalPagar = contasPagar.reduce((s, c) => s + (Number(c.valor) || 0), 0);
+  const totalReceber = contasReceber
+    .filter((c) => (c.status || "").toLowerCase() === "pendente")
+    .reduce((s, c) => s + (Number(c.valor) || 0), 0);
+  const totalPagar = contasPagar
+    .filter((c) => (c.status || "").toLowerCase() === "pendente")
+    .reduce((s, c) => s + (Number(c.valor) || 0), 0);
   const fluxo = totalReceber - totalPagar;
 
   const cards = [
@@ -39,12 +43,12 @@ export default function Home() {
         <div className="grid grid-cols-2 gap-6">
           <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
             <h3 className="text-lg font-bold text-black mb-4">Vendas</h3>
-            <GraficoVendas vendasData={vendas} />
+            <GraficoVendas key={vendas.length} vendasData={vendas} />
           </div>
 
           <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
             <h3 className="text-lg font-bold text-black mb-4">Produtos por categoria</h3>
-            <GraficoCategorias produtosData={produtos} />
+            <GraficoCategorias key={produtos.length} produtosData={produtos} />
           </div>
         </div>
       </div>

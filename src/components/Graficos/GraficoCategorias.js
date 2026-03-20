@@ -1,11 +1,20 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const DEFAULT_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4', '#f472b6'];
 
 const GraficoCategorias = ({ produtosData = null }) => {
+  const [dataCount, setDataCount] = useState(0);
+
+  // Monitora mudanças no array de produtos
+  useEffect(() => {
+    if (produtosData?.length !== undefined) {
+      setDataCount(produtosData.length);
+    }
+  }, [produtosData?.length]);
+
   const data = useMemo(() => {
     if (!produtosData || produtosData.length === 0) {
       return [
@@ -32,7 +41,7 @@ const GraficoCategorias = ({ produtosData = null }) => {
     // sort desc by value
     entries.sort((a, b) => b.value - a.value);
     return entries;
-  }, [produtosData]);
+  }, [produtosData, dataCount]);
 
   return (
     <ResponsiveContainer width="100%" height={300}>

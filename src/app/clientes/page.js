@@ -19,6 +19,8 @@ export default function Page() {
         return Object.values(item).some(v => String(v).toLowerCase().includes(q));
     });
 
+    console.log(clientes)
+
     return (
         <div className="flex-1 min-h-screen flex flex-col">
             <PageHeader titulo="Clientes" descricao="Gerenciamento de clientes" botaoNome={canEdit("clientes") ? "+ novo cliente" : undefined} onCreate={() => { setEditing(null); setModalOpen(true); }} />
@@ -28,8 +30,8 @@ export default function Page() {
                     dados={filtered}
                     tipo="cliente"
                     onEdit={canEdit("clientes") ? (item) => { setEditing(item); setModalOpen(true); } : undefined}
-                    onDelete={canEdit("clientes") ? (item) => {
-                        const result = removeCliente(item.id);
+                    onDelete={canEdit("clientes") ? async (item) => {
+                        const result = await removeCliente(item.id);
                         if (!result?.ok) alert(result?.message || "Nao foi possivel remover cliente.");
                     } : undefined}
                 />
@@ -40,8 +42,8 @@ export default function Page() {
                 onClose={() => setModalOpen(false)}
                 tipo="cliente"
                 initial={editing}
-                onSave={(obj) => {
-                    const result = upsertCliente(editing ? { ...editing, ...obj } : obj);
+                onSave={async (obj) => {
+                    const result = await upsertCliente(editing ? { ...editing, ...obj } : obj);
                     if (!result?.ok) alert(result?.message || "Nao foi possivel salvar cliente.");
                 }}
             />

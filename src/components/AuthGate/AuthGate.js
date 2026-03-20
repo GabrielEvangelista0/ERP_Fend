@@ -19,18 +19,35 @@ export default function AuthGate({ children }) {
   const router = useRouter();
 
   useEffect(() => {
-    if (!hydrated) return;
+    console.debug('[AuthGate] useEffect triggered', { 
+      hydrated, 
+      currentUser: currentUser?.login, 
+      pathname,
+      timestamp: new Date().toISOString()
+    });
+    
+    if (!hydrated) {
+      console.debug('[AuthGate] não hidratado ainda, abortando');
+      return;
+    }
+    
     const moduleName = moduleFromPath(pathname);
+    console.debug('[AuthGate] módulo detectado:', moduleName);
 
     if (!currentUser && moduleName !== "login") {
+      console.debug('[AuthGate] sem usuário e não é login, redirecionando para /login');
       router.replace("/login");
       return;
     }
+    
     if (currentUser && moduleName === "login") {
+      console.debug('[AuthGate] usuário logado tentando acessar login, redirecionando para /');
       router.replace("/");
       return;
     }
+    
     if (currentUser && moduleName !== "login" && !canAccess(moduleName)) {
+      console.debug('[AuthGate] usuário sem acesso ao módulo, redirecionando para /');
       router.replace("/");
     }
   }, [hydrated, currentUser, pathname, router, canAccess]);

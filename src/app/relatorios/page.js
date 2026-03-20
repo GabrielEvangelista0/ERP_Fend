@@ -16,34 +16,121 @@ function exportCsv(filename, rows) {
 }
 
 export default function Page() {
-  const { vendas, produtos, contasReceber, contasPagar } = useApp();
-  const [tab, setTab] = useState("vendas");
+  const { vendas, produtos, contasReceber, contasPagar, clientes, compras } = useApp();
+  const [tab, setTab] = useState("performance");
 
-  const totalVendas = useMemo(() => vendas.reduce((acc, v) => acc + (Number(v.total) || 0), 0), [vendas]);
-  const totalEstoque = useMemo(() => produtos.reduce((acc, p) => acc + (Number(p.estoque) || 0), 0), [produtos]);
-  const totalReceber = useMemo(() => contasReceber.reduce((acc, c) => acc + (Number(c.valor) || 0), 0), [contasReceber]);
-  const totalPagar = useMemo(() => contasPagar.reduce((acc, c) => acc + (Number(c.valor) || 0), 0), [contasPagar]);
+  // Análise de Performance
+  const topClientes = useMemo(() => {
+    const map = {};
+    vendas.forEach((v) => {
+      const cliente = v.cliente;
+      if (!map[cliente]) map[cliente] = { cliente, vendas: 0, total: 0 };
+      map[cliente].vendas += 1;
+      map[cliente].total += Number(v.total) || 0;
+    });
+    return Object.values(map).sort((a, b) => b.total - a.total).slice(0, 5);
+  }, [vendas]);
 
-  const relatorios = [
-    { id: "vendas", nome: "Relatorio de Vendas" },
+  // Análise de Estoque
+  const estoqueCritico = useMemo(() => {
+    const media = produtos.length > 0 ? produtos.reduce((acc, p) => acc + (Number(p.estoque) || 0), 0) / produtos.length : 0;
+    return produtos
+      .filter((p) => (Number(p.estoque) || 0) < media * 0.5)
+      .sort((a, b) => (Number(a.estoque) || 0) - (Number(b.estoque) || 0))
+      .slice(0, 10);
+  }, [produtos]);
+
+  const valorEstoque = useMemo(() => {
+    return produtos.reduce((acc, p) => {
+      const preco = Number(String(p.preco || "0").replace(/[^\d,.-]/g, "").replace(",", ".")) || 0;
+      const estoque = Number(p.estoque) || 0;
+      return acc + preco * estoque;
+    }, 0);
+  }, [produtos]);
+
+  // Análise Financeira
+  const receitas = vendas.reduce((acc, v) => acc + (Number(v.total) || 0), 0);
+  const custos = compras.reduce((acc, c) => acc + (Number(c.total) || 0), 0);
+  const lucroBruto = receitas - custos;
+  const margem = receitas > 0 ? ((lucroBruto / receitas) * 100).toFixed(2) : 0;
+  
+  const totalReceber = useMemo(() => contasReceber
+    .filter((c) => (c.status || "").toLowerCase() === "pendente")
+    .reduce((acc, c) => acc + (Number(c.valor) || 0), 0), [contasReceber]);
+  const totalPagar = useMemo(() => contasPagar
+    .filter((c) => (c.status || "").toLowerCase() === "pendente")
+    .reduce((acc, c) => acc + (Number(c.valor) || 0), 0), [contasPagar]);
+  const fluxoCaixa = totalReceber - totalPagar;
+
+  const analises = [
+    { id: "performance", nome: "Relatorio de Vendas" },
     { id: "estoque", nome: "Relatorio de Estoque" },
     { id: "financeiro", nome: "Relatorio Financeiro" },
   ];
 
-  const rows = tab === "vendas"
-    ? [["ID", "Data", "Cliente", "Itens", "Total"], ...vendas.map((v) => [v.id, v.data, v.cliente, v.items, v.total])]
+  const getRowsData = () => {
+    if (tab === "performance") {
+      return [
+        ["Posição", "Cliente", "Total de Vendas", "Quantidade", "Ticket Médio"],
+        ...topClientes.map((c, idx) => [
+          idx + 1,
+          c.cliente,
+          formatCurrency(c.total),
+          c.vendas,
+          formatCurrency(c.total / c.vendas)
+        ])
+      ];
+    } else if (tab === "estoque") {
+      return [
+        ["Nome", "Categoria", "Preço", "Estoque", "Status"],
+        ...estoqueCritico.map((p) => {
+          const preco = String(p.preco || "0").replace(/[^\d,.-]/g, "").replace(",", ".");
+          return [p.nome, p.categoria, p.preco, p.estoque, "Crítico"];
+        })
+      ];
+    } else if (tab === "financeiro") {
+      return [
+        ["Indicador", "Valor", "Status"],
+        ["Contas a Receber", formatCurrency(totalReceber), contasReceber.filter((c) => (c.status || "").toLowerCase() === "pendente").length + " pendente(s)"],
+        ["Contas a Pagar", formatCurrency(totalPagar), contasPagar.filter((c) => (c.status || "").toLowerCase() === "pendente").length + " pendente(s)"],
+        ["Fluxo de Caixa", formatCurrency(fluxoCaixa), fluxoCaixa >= 0 ? "Positivo" : "Negativo"],
+        ["Saldo Líquido", formatCurrency(fluxoCaixa), fluxoCaixa >= 0 ? "Saudável" : "Crítico"],
+      ];
+    }
+    return [];
+  };
+
+  const rows = getRowsData();
+
+  const summaryCards = tab === "performance"
+    ? [
+        { titulo: "Top Cliente", valor: topClientes[0]?.cliente || "N/A", descricao: formatCurrency(topClientes[0]?.total || 0), destaque: true },
+        { titulo: "Total de Vendas", valor: vendas.length.toString(), descricao: formatCurrency(vendas.reduce((acc, v) => acc + (Number(v.total) || 0), 0)), destaque: false },
+        { titulo: "Ticket Médio", valor: formatCurrency(vendas.length > 0 ? vendas.reduce((acc, v) => acc + (Number(v.total) || 0), 0) / vendas.length : 0), descricao: `${vendas.length} vendas`, destaque: true },
+      ]
     : tab === "estoque"
-      ? [["ID", "Nome", "Categoria", "Preco", "Estoque"], ...produtos.map((p) => [p.id, p.nome, p.categoria, p.preco, p.estoque])]
-      : [["Tipo", "ID", "Descricao", "Valor", "Vencimento", "Status"],
-        ...contasReceber.map((c) => ["Receber", c.id, c.descricao, c.valor, c.vencimento, c.status]),
-        ...contasPagar.map((c) => ["Pagar", c.id, c.descricao, c.valor, c.vencimento, c.status])];
+      ? [
+          { titulo: "Produtos Críticos", valor: estoqueCritico.length.toString(), descricao: `${parseInt((estoqueCritico.length / produtos.length) * 100)}% do catálogo`, destaque: estoqueCritico.length > 0 },
+          { titulo: "Valor Total", valor: formatCurrency(valorEstoque), descricao: `${produtos.length} produtos`, destaque: false },
+          { titulo: "Estoque Médio", valor: `${Math.round(produtos.reduce((acc, p) => acc + (Number(p.estoque) || 0), 0) / produtos.length)} un.`, descricao: "Por produto", destaque: false },
+        ]
+      : tab === "financeiro"
+        ? [
+            { titulo: "Faturamento", valor: formatCurrency(receitas), descricao: `${vendas.length} vendas`, destaque: true },
+            { titulo: "Lucro Bruto", valor: formatCurrency(lucroBruto), descricao: "Receitas - Custos", destaque: lucroBruto >= 0 },
+            { titulo: "Margem de Lucro", valor: `${margem}%`, descricao: "Do faturamento total", destaque: margem > 0 },
+            { titulo: "Fluxo de Caixa", valor: formatCurrency(fluxoCaixa), descricao: "Receber - Pagar", destaque: fluxoCaixa >= 0 },
+            { titulo: "Total a Receber", valor: formatCurrency(totalReceber), descricao: `${contasReceber.filter((c) => (c.status || "").toLowerCase() === "pendente").length} pendente(s)`, destaque: false },
+            { titulo: "Total a Pagar", valor: formatCurrency(totalPagar), descricao: `${contasPagar.filter((c) => (c.status || "").toLowerCase() === "pendente").length} pendente(s)`, destaque: false },
+          ]
+        : [];
 
   return (
     <div className="flex-1 min-h-screen flex flex-col">
-      <PageHeader titulo="Relatorios" descricao="Vendas, estoque e financeiro com exportacao CSV" />
+      <PageHeader titulo="Relatorios" descricao="Vendas, estoque e financeiro com análises de dados" />
       <div className="flex-1 p-8">
         <div className="grid grid-cols-4 gap-4 mb-8">
-          {relatorios.map((item) => (
+          {analises.map((item) => (
             <button
               key={item.id}
               onClick={() => setTab(item.id)}
@@ -57,10 +144,10 @@ export default function Page() {
           </button>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <SummaryCard titulo="Total vendas" valor={formatCurrency(totalVendas)} descricao={`${vendas.length} vendas`} destaque={true} />
-          <SummaryCard titulo="Total estoque" valor={`${totalEstoque} un.`} descricao={`${produtos.length} produtos`} destaque={false} />
-          <SummaryCard titulo="Fluxo liquido" valor={formatCurrency(totalReceber - totalPagar)} descricao="Receber - Pagar" destaque={totalReceber >= totalPagar} />
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+          {summaryCards.map((card, idx) => (
+            <SummaryCard key={idx} titulo={card.titulo} valor={card.valor} descricao={card.descricao} destaque={card.destaque} />
+          ))}
         </div>
 
         <div className="bg-white border border-gray-200 rounded-lg p-4 overflow-auto">

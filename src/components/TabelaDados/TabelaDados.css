@@ -21,10 +21,16 @@
     color: #555;
 }
 
+.tabela tbody tr {
+    transition: background-color 0.15s ease;
+}
+
 .tabela tbody tr:hover {
     background-color: #fafafa;
 }
 
-.tabela tbody tr {
-    transition: background-color 0.15s ease;
+/* Linhas clicáveis (vendas e compras) */
+.tabela tbody tr.cursor-pointer:hover {
+    background-color: #eff6ff;
+    box-shadow: inset 0 0 0 1px #dbeafe;
 }
